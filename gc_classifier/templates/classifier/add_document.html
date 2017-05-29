@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+	{{document.name}}
+{% endblock title %}
+
+{% block brand %}
+	{{document.name}}
+{% endblock brand %}
+
+{% block content %}
+	<h3>Create a new document</h3>
+	{% crispy form %}
+{% endblock content %}

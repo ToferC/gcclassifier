@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+	{{document.name}}
+{% endblock title %}
+
+{% block brand %}
+	{{document.name}}
+{% endblock brand %}
+
+{% block content %}
+	<h3>{{document.name}}</h3>
+	{{document.content}}
+	Added by: {{document.creator}}
+	Added on: {{document.created_date}}
+	Last edited: {{document.edited_date}}
+	<hr>
+	<h4>Communities</h4>
+	{% for community in communities %}
+		{{community.name}} - {{ community.rating.rating }}
+	{% endfor %}
+	<hr>
+	<h4>Tags</h4>
+	{% for tag in tags %}
+		{{tag.name}}
+	{% endfor %}
+{% endblock content %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+	GC Classifier
+{% endblock title %}
+
+{% block brand %}
+	GC Classifier
+{% endblock brand %}
+
+{% block content %}
+
+<hr>
+<h3>Documents</h3>
+{% for document in documents %}
+	<a class="btn btn-success btn-md" style="background:black" href="{% url 'document' document_slug=document.slug %}">{{ document.title }}</a>
+{% endfor %}
+
+
+{% endblock content %}
