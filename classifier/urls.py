@@ -12,6 +12,8 @@ urlpatterns = [
 	# Model urls
 	url(r'^document/(?P<document_slug>[\w\-]+)/$',
 		views.document, name='document'),
+	url(r'^review_document/(?P<document_slug>[\w\-]+)/$',
+		views.review_document, name='review_document'),
 	url(r'^community/(?P<community_slug>[w\-]+)/$',
 		views.community, name='community'),
 	url(r'^tag/(?P<tag_slug>[\w\-]+)/$',

@@ -75,9 +75,19 @@ class Tag(models.Model):
         Tags are related to Communities via Keywords
     '''
 
+    EN = "English"
+    FR = "French"
+
+    LANGUAGES = (
+        (EN, "English"),
+        (FR, "French"),
+        )
+
     name = models.CharField(max_length=128)
     creator = models.ForeignKey(User)
     user_generated = models.BooleanField(default=False)
+    language = models.CharField(max_length=4, default="EN",
+        choices=LANGUAGES)
     description = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to='images/tag_images/%Y/%m/%d/%H_%M_%S',
         null=True, blank=True, default='images/tag_images/nothing.jpg')
@@ -113,18 +123,24 @@ class Relationship(models.Model):
         Model to establish relationship between Tags
     '''
 
-    CH = "Child"
-    RE = "Related"
-    SU = "Subset of"
-    SP = "Superset of"
-    SN = "Synonym for"
+    SC = "Subject category"
+    HN = "History note"
+    RT = "Related term"
+    BT = "Broader term"
+    NT = "Narrower term"
+    UF = "Used for"
+    US = "Use"
+    TR = "Translation"
 
     RELATIONSHIPS = (
-        (CH, "Child of"),
-        (RE, "Related to"),
-        (SU, "Subset of"),
-        (SP, "Superset of"),
-        (SN, "Synonym for"),
+        (SC, "Subject category"),
+        (HN, "History note"),
+        (RT, "Related term"),
+        (BT, "Broader term"),
+        (NT, "Narrower term"),
+        (UF, "Used for"),
+        (US, "Use"),
+        (TR, "Translation"),
         )
 
     from_tag = models.ForeignKey(Tag,

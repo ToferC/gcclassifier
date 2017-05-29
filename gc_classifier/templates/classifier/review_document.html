@@ -11,22 +11,17 @@
 {% endblock brand %}
 
 {% block content %}
+
 	<h3>{{document.title}}</h3>
 	<p>{{document.content}}</p>
 	<p>Added by: {{document.creator}}</p>
-	<p>Added on: {{document.created_date}}</p>
-	<p>Last edited: {{document.edited_date}}</p>
+	<p>Added: {{document.created_date}}</p>
+	<p>Edited: {{document.edited_date}}</p>
 	<hr>
-	<h4>Communities</h4>
-
+	<h4>Proposed Communities</h4>
 	<ul>
 	{% for community in communities %}
-		{{community.name}} - {{ community.rating.rating }}
+		<li>{{community.name}}</li>
 	{% endfor %}
 	</ul>
-	<hr>
-	<h4>Tags</h4>
-	{% for tag in tags %}
-		{{tag.name}}
-	{% endfor %}
 {% endblock content %}

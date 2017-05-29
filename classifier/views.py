@@ -99,7 +99,7 @@ def add_document(request):
             form.save(creator=user, commit=True)
             form.save_m2m()
 
-            return HttpResponseRedirect("/document/{}".format(slug))
+            return HttpResponseRedirect("/classifier/document/{}".format(slug))
 
         else:
             print (form.errors)
@@ -109,6 +109,26 @@ def add_document(request):
 
     return render(request, 'classifier/add_document.html',
         {'form': form})
+
+
+def review_document(request, document_slug):
+
+    context_dict = {}
+
+    try:
+        document = Document.objects.get(slug=document_slug)
+        communities = Community.objects.all().distinct()
+
+        context_dict['document'] = document
+        context_dict['communities'] = communities
+
+
+    except Document.DoesNotExist:
+        pass
+
+    return render(request, 'classifier/review_document.html', context_dict)
+
+
 
 @login_required
 def add_community(request):
@@ -123,7 +143,7 @@ def add_community(request):
             form.save(creator=user, commit=True)
             form.save_m2m()
 
-            return HttpResponseRedirect("/community/{}".format(slug))
+            return HttpResponseRedirect("classifier/community/{}".format(slug))
 
         else:
             print (form.errors)
@@ -148,7 +168,7 @@ def add_tag(request):
             form.save(creator=user, commit=True)
             form.save_m2m()
 
-            return HttpResponseRedirect("/tag/{}".format(slug))
+            return HttpResponseRedirect("classifier/tag/{}".format(slug))
 
         else:
             print (form.errors)
