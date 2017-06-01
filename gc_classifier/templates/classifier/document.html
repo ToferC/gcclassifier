@@ -20,8 +20,8 @@
 	<h4>Communities</h4>
 
 	<ul>
-	{% for community in communities %}
-		{{community.name}} - {{ community.rating.rating }}
+	{% for rating in ratings %}
+		{{rating}}
 	{% endfor %}
 	</ul>
 	<hr>
@@ -29,4 +29,6 @@
 	{% for tag in tags %}
 		{{tag.name}}
 	{% endfor %}
+	<hr>
+	<a class="btn btn-primary" href="{% url 'review_document' document_slug=document.slug %}">Review Document</a>
 {% endblock content %}

@@ -24,7 +24,7 @@
 	<table border="1">
 	<th>Community</th>
 	<th>Rating</th>
-	{% for rating in machine_ratings %}
+	{% for rating in user_ratings %}
 		{% for field, value in rating.fields.items %}
 			<tr><td>{{ field }}</td>
 			<td>{{ value }}</td></tr>
