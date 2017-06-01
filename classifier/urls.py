@@ -7,7 +7,7 @@ from . import views
 # URL patterns
 
 urlpatterns = [
-	url(r'^$', views.index, name='index'),
+	url(r'^$', views.index, name='classifier_index'),
 
 	# Model urls
 	url(r'^document/(?P<document_slug>[\w\-]+)/$',

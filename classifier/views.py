@@ -11,9 +11,17 @@ from classifier.forms import RatingForm, DocumentForm, TagForm, RatingForm, Comm
 
 from django.http import HttpResponseRedirect
 from classifier.forms import *
+
+from classifier.utility_scripts import load_obj
+from classifier.text_preprocessing import tokenize, pre_process, find_language
+from classifier.text_preprocessing import find_keywords, predict_communities
+
 import json
 
 
+# Load classifier
+
+multilabel_clf = load_obj("multilabel_clf")
 
 # Create your views here.
 
@@ -39,9 +47,50 @@ def document(request, document_slug):
      
         context_dict['document'] = document
 
-        context_dict['ratings'] = Rating.objects.filter(document=document).distinct()
-        #context_dict['tags'] = Tag.objects.filter(document=document).distinct()
+        machine_ratings = serializers.serialize( "python",
+            Rating.objects.filter(document=document, user_generated=False),
+            fields=(
+                'atip_community',
+                'materiel_community',
+                'procurement_community',
+                'real_property_community',
+                'evaluator_community',
+                'communication_community',
+                'regulator_community',
+                'financial_community',
+                'im_community',
+                'it_community',
+                'auditor_community',
+                'security_community',
+                'hr_community',
+                'policy_community',
+                'science_community',
+                'service_community',)
+            )
+        user_ratings = serializers.serialize( "python",
+            Rating.objects.filter(document=document, user_generated=True),
+            fields=(
+                'atip_community',
+                'materiel_community',
+                'procurement_community',
+                'real_property_community',
+                'evaluator_community',
+                'communication_community',
+                'regulator_community',
+                'financial_community',
+                'im_community',
+                'it_community',
+                'auditor_community',
+                'security_community',
+                'hr_community',
+                'policy_community',
+                'science_community',
+                'service_community',)
+            )        #context_dict['tags'] = Tag.objects.filter(document=document).distinct()
         
+        context_dict['user_ratings'] = user_ratings
+        context_dict['machine_ratings'] = machine_ratings
+
     except Document.DoesNotExist:
         pass
 
@@ -100,8 +149,49 @@ def add_document(request):
 
         if form.is_valid():
             slug = slugify(form.cleaned_data['title'])
-            form.save(creator=user, commit=True)
+            text = form.cleaned_data['content']
+
+            language = find_language(text)
+            rake_keywords = find_keywords(text)
+
+            form.save(creator=user,
+                language=language,
+                rake_keywords=rake_keywords,
+                commit=True)
+
             form.save_m2m()
+
+            text = form.cleaned_data['content']
+
+            processed_text = pre_process(text)
+            predicted_values = multilabel_clf.predict_proba(processed_text)
+            predicted_output = predict_communities(predicted_values)
+
+            document = Document.objects.get(slug=slug)
+
+            rating = Rating(
+                creator=user,
+                document=document,
+                atip_community = predicted_output['ATIP'],
+                materiel_community = predicted_output['materiel_management'],
+                procurement_community = predicted_output['procurement_specialists'],
+                real_property_community = predicted_output['real_property'],
+                evaluator_community = predicted_output['evaluators'],
+                communication_community = predicted_output['communication'],
+                regulator_community = predicted_output['regulators'],
+                financial_community = predicted_output['financial_officers'],
+                im_community = predicted_output['information_management'],
+                it_community = predicted_output['information_technology'],
+                auditor_community = predicted_output['internal_auditors'],
+                security_community = predicted_output['security_specialist'],
+                hr_community = predicted_output['human_resources'],
+                policy_community = predicted_output['policy'],
+                science_community = predicted_output['fed_science_tech'],
+                service_community = predicted_output['services'],
+                user_generated=False,
+                )
+
+            rating.save()
 
             return HttpResponseRedirect("/classifier/document/{}".format(slug))
 

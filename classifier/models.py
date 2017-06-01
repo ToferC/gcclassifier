@@ -25,6 +25,8 @@ class Document(models.Model):
     content = models.TextField(max_length=16000)
     language = models.CharField(max_length=8, choices=LANGUAGES,
     	default='EN')
+    user_keywords = models.CharField(max_length=128)
+    rake_keywords = models.CharField(max_length=128)
     published = models.BooleanField(default=True)
     slug = models.SlugField(unique=True, max_length=255)
 
@@ -184,8 +186,8 @@ class Relationship(models.Model):
     to_tag = models.ForeignKey(Tag,
         related_name='to_tags',
         related_query_name='to_tag')
-    relationship_type = models.CharField(max_length=12,
-        choices=RELATIONSHIPS)
+    relationship_type = models.CharField(max_length=16,
+        choices=RELATIONSHIPS, default="Related term")
     rating = models.FloatField(default=1.0)
     created_date = models.DateTimeField(auto_now=True)
     edited_date = models.DateTimeField(auto_now=True)

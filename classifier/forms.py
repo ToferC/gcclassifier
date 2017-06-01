@@ -21,7 +21,7 @@ class DocumentForm(forms.ModelForm):
         model = Document
         fields = "__all__"
         exclude = ['creator', 'created_date', 'edited_date',
-        'slug']
+        'language', 'rake_keywords', 'slug']
 
     def __init__(self, *args, **kwargs):
 
@@ -34,9 +34,11 @@ class DocumentForm(forms.ModelForm):
                     ref="classifier/document/{{ document.slug }}">Cancel</a> """),
                 Submit('save', 'Save'),))
 
-    def save(self, creator, commit=False):
+    def save(self, creator, language, rake_keywords, commit=False):
         instance = super(DocumentForm, self).save(commit=False)
         instance.creator=creator
+        instance.language=language
+        instance.rake_keywords=rake_keywords
         instance.save()
         return instance
 

@@ -14,16 +14,35 @@
 	<h3>{{document.title}}</h3>
 	<p>{{document.content}}</p>
 	<p>Added by: {{document.creator}}</p>
+	<p>Language: {{document.language}}</p>
+	<p>User Keywords: {{document.user_keywords}}</p>
+	<p>Auto-Generated Keywords: {{document.rake_keywords}}</p>
 	<p>Added on: {{document.created_date}}</p>
 	<p>Last edited: {{document.edited_date}}</p>
 	<hr>
 	<h4>Communities</h4>
 
-	<ul>
-	{% for rating in ratings %}
-		{{rating}}
+	<h4>Auto-Suggested Communities</h4>
+	<table>
+	{% for rating in machine_ratings %}
+		{% for field, value in rating.fields.items %}
+			<tr><td>{{ field }}</td>
+			<td>{{ value }}</td></tr>
+		{% endfor %}
 	{% endfor %}
-	</ul>
+	</table>
+	
+	<hr>
+
+	<h4>User-Suggested Communities</h4>
+	<table>
+	{% for rating in user_ratings %}
+		{% for field, value in rating.fields.items %}
+			<tr><td>{{ field }}</td>
+			<td>{{ value }}</td></tr>
+		{% endfor %}
+	{% endfor %}
+	</table>
 	<hr>
 	<h4>Tags</h4>
 	{% for tag in tags %}
