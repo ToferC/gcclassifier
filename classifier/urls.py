@@ -20,9 +20,15 @@ urlpatterns = [
 		views.tag, name='tag'),
 
 	# Add object urls
+	url(r'^add_document/(?P<pk>\d+)/$',
+		views.add_document, 
+		name='add_document'),
 	url(r'^add_document/$',
 		views.add_document, 
 		name='add_document'),
+	url(r'^upload_file/$',
+		views.upload_file, 
+		name='upload_file'),
 	url(r'^add_community/$',
 		views.add_community, 
 		name='add_community'),

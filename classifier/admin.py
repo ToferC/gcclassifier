@@ -1,5 +1,5 @@
 from django.contrib import admin
-from classifier.models import Document, Community, Tag
+from classifier.models import Document, Community, Tag, File
 from classifier.models import KeyWord, Rating, Relationship
 
 class DocumentAdmin(admin.ModelAdmin):
@@ -13,6 +13,14 @@ class DocumentAdmin(admin.ModelAdmin):
 		'edited_date',
 		'language',
 		'published')
+
+
+class FileAdmin(admin.ModelAdmin):
+	list_display = (
+		'name',
+		'created_date',
+		'edited_date'
+		)
 
 
 class CommunityAdmin(admin.ModelAdmin):
@@ -87,6 +95,7 @@ class RelationshipAdmin(admin.ModelAdmin):
 # Register your models here.
 
 admin.site.register(Document, DocumentAdmin)
+admin.site.register(File, FileAdmin)
 admin.site.register(Community, CommunityAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Rating, RatingAdmin)

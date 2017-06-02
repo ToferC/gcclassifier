@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from classifier.models import Document, Community, Tag, Rating, Relationship, KeyWord
+from classifier.models import Document, File, Community, Tag, Rating, Relationship, KeyWord
 from django.views.generic.edit import FormView, UpdateView, DeleteView, CreateView
 
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
@@ -7,7 +7,7 @@ from django.forms import modelformset_factory
 
 from django.core import serializers
 
-from classifier.forms import RatingForm, DocumentForm, TagForm, RatingForm, CommunityForm
+from classifier.forms import RatingForm, DocumentForm, FileForm, TagForm, RatingForm, CommunityForm
 
 from django.http import HttpResponseRedirect
 from classifier.forms import *
@@ -15,6 +15,7 @@ from classifier.forms import *
 from classifier.utility_scripts import load_obj
 from classifier.text_preprocessing import tokenize, pre_process, find_language
 from classifier.text_preprocessing import find_keywords, predict_communities
+from classifier.process_document import process_document
 
 import json
 
@@ -140,9 +141,16 @@ def add_member(request):
 
 
 @login_required
-def add_document(request):
+def add_document(request, pk=None):
 
     user = request.user
+    name = None
+
+    if pk:
+        file = File.objects.get(pk=pk)
+
+        title = file.name
+        text = process_document(file.file.url)
 
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -199,9 +207,38 @@ def add_document(request):
             print (form.errors)
 
     else:
-        form = DocumentForm()
+        if title:
+            form = DocumentForm(initial={'title':title, 'content':text})
+        else:
+            form = DocumentForm()
 
     return render(request, 'classifier/add_document.html',
+        {'form': form})
+
+
+@login_required
+def upload_file(request):
+
+    user = request.user
+
+    if request.method == 'POST':
+        form = FileForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            
+            new_file = form.save(creator=user, commit=True)
+
+            file_pk = new_file.pk
+
+            return HttpResponseRedirect(f"/classifier/add_document/{new_file.pk}")
+
+        else:
+            print (form.errors)
+
+    else:
+        form = FileForm()
+
+    return render(request, 'classifier/upload_file.html',
         {'form': form})
 
 

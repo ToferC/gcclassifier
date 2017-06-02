@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 
-from classifier.models import Document, Community, Tag, Rating, KeyWord, Relationship
+from classifier.models import Document, File, Community, Tag, Rating, KeyWord, Relationship
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field, Fieldset
@@ -21,7 +21,7 @@ class DocumentForm(forms.ModelForm):
         model = Document
         fields = "__all__"
         exclude = ['creator', 'created_date', 'edited_date',
-        'language', 'rake_keywords', 'slug']
+        'language', 'rake_keywords', 'file', 'slug']
 
     def __init__(self, *args, **kwargs):
 
@@ -42,6 +42,31 @@ class DocumentForm(forms.ModelForm):
         instance.save()
         return instance
 
+
+class FileForm(forms.ModelForm): 
+    """Form for users to add images"""
+
+    class Meta:
+        model = File
+        fields = "__all__"
+        exclude = ['creator', 'created_date', 'edited_date']
+
+    def __init__(self, *args, **kwargs):
+
+        super(FileForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.layout.append(
+            FormActions(
+                HTML("""<br><a committment="button" class="btn btn-default"
+                    ref="classifier/add_document">Cancel</a> """),
+                Submit('save', 'Save'),))
+
+    def save(self, creator, commit=False):
+        instance = super(FileForm, self).save(commit=False)
+        instance.creator=creator
+        instance.save()
+        return instance
 
 class CommunityForm(forms.ModelForm): 
     """Form for users to add images"""

@@ -25,9 +25,11 @@ class Document(models.Model):
     content = models.TextField(max_length=16000)
     language = models.CharField(max_length=8, choices=LANGUAGES,
     	default='EN')
-    user_keywords = models.CharField(max_length=128)
+    user_keywords = models.CharField(max_length=128,
+        help_text="Please enter your tags separated by commas.")
     rake_keywords = models.CharField(max_length=128)
     published = models.BooleanField(default=True)
+    file = models.ForeignKey("File", blank=True, null=True)
     slug = models.SlugField(unique=True, max_length=255)
 
     def __str__(self):
@@ -36,6 +38,17 @@ class Document(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super(Document, self).save(*args, **kwargs)
+
+
+class File(models.Model):
+    name = models.CharField(max_length=128)
+    file = models.FileField(upload_to='files/documents/%Y/%m/%d/%H_%M_%S')
+    creator = models.ForeignKey(User)
+    created_date = models.DateTimeField(auto_now=True)
+    edited_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Community(models.Model):
@@ -191,3 +204,15 @@ class Relationship(models.Model):
     rating = models.FloatField(default=1.0)
     created_date = models.DateTimeField(auto_now=True)
     edited_date = models.DateTimeField(auto_now=True)
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+    website = models.URLField(blank=True)
+    image = models.ImageField(
+        upload_to='user_images/%Y/%m/%d',
+        default='profile_images/shadow_figure.jpeg')
+    score = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.user.username
