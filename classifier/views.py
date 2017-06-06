@@ -144,7 +144,7 @@ def add_member(request):
 def add_document(request, pk=None):
 
     user = request.user
-    name = None
+    title = None
 
     if pk:
         file = File.objects.get(pk=pk)
