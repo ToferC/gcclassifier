@@ -141,6 +141,7 @@ class Tag(models.Model):
     description = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to='images/tag_images/%Y/%m/%d/%H_%M_%S',
         null=True, blank=True, default='images/tag_images/nothing.jpg')
+    approved = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now=True)
     edited_date = models.DateTimeField(auto_now=True)
 
@@ -160,10 +161,10 @@ class KeyWord(models.Model):
         and Communities
     '''
 
-    community = models.ForeignKey(Community)
+    document = models.ForeignKey(Document)
     tag = models.ForeignKey(Tag)
     user_generated = models.BooleanField(default=False)
-    rating = models.FloatField()
+    rating = models.FloatField(default=1.0)
     created_date = models.DateTimeField(auto_now=True)
     edited_date = models.DateTimeField(auto_now=True)
 
@@ -199,7 +200,7 @@ class Relationship(models.Model):
     to_tag = models.ForeignKey(Tag,
         related_name='to_tags',
         related_query_name='to_tag')
-    relationship_type = models.CharField(max_length=16,
+    relationship_type = models.CharField(max_length=24,
         choices=RELATIONSHIPS, default="Related term")
     rating = models.FloatField(default=1.0)
     created_date = models.DateTimeField(auto_now=True)

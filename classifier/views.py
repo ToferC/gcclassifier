@@ -30,7 +30,7 @@ def index(request):
 
     context_dict = {}
 
-    documents = Document.objects.all().distinct()
+    documents = Document.objects.all().distinct().order_by('-created_date')
 
     context_dict['documents'] = documents
 
@@ -88,7 +88,7 @@ def document(request, document_slug):
                 'science_community',
                 'service_community',)
             )        #context_dict['tags'] = Tag.objects.filter(document=document).distinct()
-        
+
         context_dict['user_ratings'] = user_ratings
         context_dict['machine_ratings'] = machine_ratings
 
@@ -158,12 +158,19 @@ def add_document(request, pk=None):
         if form.is_valid():
             slug = slugify(form.cleaned_data['title'])
             text = form.cleaned_data['content']
+            user_keywords = form.cleaned_data['user_keywords']
+
+            low_keywords = user_keywords.lower()
+            split_keywords = low_keywords.split(",")
+
+            processed_keywords = ", ".join(split_keywords)
 
             language = find_language(text)
             rake_keywords = find_keywords(text)
 
             form.save(creator=user,
                 language=language,
+                user_keywords=processed_keywords,
                 rake_keywords=rake_keywords,
                 commit=True)
 
@@ -176,6 +183,17 @@ def add_document(request, pk=None):
             predicted_output = predict_communities(predicted_values)
 
             document = Document.objects.get(slug=slug)
+            tags = Tag.objects.all()
+
+            tag_names = [tag.name for tag in tags]
+
+            # Associate tags from user keywords
+            
+            for keyword in split_keywords:
+                if keyword in tag.names:
+                    Keyword.objects.get_or_create(
+                        document=document,
+                        tag=Tag.object.filter(name=keyword))
 
             rating = Rating(
                 creator=user,
@@ -291,6 +309,7 @@ def review_document(request, document_slug):
         
         context_dict['document'] = document
         context_dict['user_ratings'] = user_ratings
+        context_dict['num_user_ratings'] = len(user_ratings)
         context_dict['machine_ratings'] = machine_ratings
 
         if request.method == 'POST':
@@ -329,7 +348,7 @@ def document_results(request, document_slug):
         machine_ratings = Rating.objects.filter(document=document).filter(user_generated=False)
         user_ratings = Rating.objects.filter(document=document).filter(user_generated=True)
 
-        num_user_ratings = len(user_ratings)
+        num_user_ratings = min(len(user_ratings),1)
         num_machine_ratings = len(machine_ratings)
 
         context_dict['num_user_ratings'] = num_user_ratings
@@ -370,30 +389,30 @@ def document_results(request, document_slug):
             context_dict['science_community'] += rating.science_community
             context_dict['service_community'] += rating.service_community
 
-        context_dict['atip_community'] = context_dict['atip_community'] / len(user_ratings)
-        context_dict['materiel_community'] = context_dict['materiel_community'] / len(user_ratings)
-        context_dict['procurement_community'] = context_dict['procurement_community'] / len(user_ratings)
-        context_dict['real_property_community'] = context_dict['real_property_community'] / len(user_ratings)
-        context_dict['evaluator_community'] = context_dict['evaluator_community'] / len(user_ratings)
-        context_dict['communication_community'] = context_dict['communication_community'] / len(user_ratings)
-        context_dict['regulator_community'] = context_dict['regulator_community'] / len(user_ratings)
-        context_dict['financial_community'] = context_dict['financial_community'] / len(user_ratings)
-        context_dict['im_community'] = context_dict['im_community'] / len(user_ratings)
-        context_dict['it_community'] = context_dict['it_community'] / len(user_ratings)
-        context_dict['auditor_community'] = context_dict['auditor_community'] / len(user_ratings)
-        context_dict['security_community'] = context_dict['security_community'] / len(user_ratings)
-        context_dict['hr_community'] = context_dict['hr_community'] / len(user_ratings)
-        context_dict['policy_community'] = context_dict['policy_community'] / len(user_ratings)
-        context_dict['science_community'] = context_dict['science_community'] / len(user_ratings)
-        context_dict['service_community'] = context_dict['service_community'] / len(user_ratings)
+        context_dict['atip_community'] = context_dict['atip_community'] / num_user_ratings
+        context_dict['materiel_community'] = context_dict['materiel_community'] / num_user_ratings
+        context_dict['procurement_community'] = context_dict['procurement_community'] / num_user_ratings
+        context_dict['real_property_community'] = context_dict['real_property_community'] / num_user_ratings
+        context_dict['evaluator_community'] = context_dict['evaluator_community'] / num_user_ratings
+        context_dict['communication_community'] = context_dict['communication_community'] / num_user_ratings
+        context_dict['regulator_community'] = context_dict['regulator_community'] / num_user_ratings
+        context_dict['financial_community'] = context_dict['financial_community'] / num_user_ratings
+        context_dict['im_community'] = context_dict['im_community'] / num_user_ratings
+        context_dict['it_community'] = context_dict['it_community'] / num_user_ratings
+        context_dict['auditor_community'] = context_dict['auditor_community'] / num_user_ratings
+        context_dict['security_community'] = context_dict['security_community'] / num_user_ratings
+        context_dict['hr_community'] = context_dict['hr_community'] / num_user_ratings
+        context_dict['policy_community'] = context_dict['policy_community'] / num_user_ratings
+        context_dict['science_community'] = context_dict['science_community'] / num_user_ratings
+        context_dict['service_community'] = context_dict['service_community'] / num_user_ratings
 
         context_dict['document'] = document
 
     except Document.DoesNotExist:
         pass
 
-    return render(request, 'classifier/review_document.html',
-        context_dict)
+    return render(request, 'classifier/document_results.html', context_dict)
+
 
 @login_required
 def add_community(request):

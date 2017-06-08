@@ -34,10 +34,11 @@ class DocumentForm(forms.ModelForm):
                     ref="classifier/document/{{ document.slug }}">Cancel</a> """),
                 Submit('save', 'Save'),))
 
-    def save(self, creator, language, rake_keywords, commit=False):
+    def save(self, creator, language, user_keywords, rake_keywords, commit=False):
         instance = super(DocumentForm, self).save(commit=False)
         instance.creator=creator
         instance.language=language
+        instance.user_keywords=user_keywords
         instance.rake_keywords=rake_keywords
         instance.save()
         return instance

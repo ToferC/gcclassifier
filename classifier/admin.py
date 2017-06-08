@@ -74,7 +74,7 @@ class RatingAdmin(admin.ModelAdmin):
 
 class KeyWordAdmin(admin.ModelAdmin):
 	list_display = (
-		'community',
+		'document',
 		'tag',
 		'rating',
 		'created_date',

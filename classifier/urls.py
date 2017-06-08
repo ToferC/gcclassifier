@@ -14,6 +14,8 @@ urlpatterns = [
 		views.document, name='document'),
 	url(r'^review_document/(?P<document_slug>[\w\-]+)/$',
 		views.review_document, name='review_document'),
+	url(r'^document_results/(?P<document_slug>[\w\-]+)/$',
+		views.document_results, name='document_results'),
 	url(r'^community/(?P<community_slug>[w\-]+)/$',
 		views.community, name='community'),
 	url(r'^tag/(?P<tag_slug>[\w\-]+)/$',
