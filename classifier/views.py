@@ -185,15 +185,18 @@ def add_document(request, pk=None):
             document = Document.objects.get(slug=slug)
             tags = Tag.objects.all()
 
-            tag_names = [tag.name for tag in tags]
+            tag_names = [tag.name.lower() for tag in tags]
 
             # Associate tags from user keywords
             
             for keyword in split_keywords:
-                if keyword in tag.names:
-                    Keyword.objects.get_or_create(
-                        document=document,
-                        tag=Tag.object.filter(name=keyword))
+                if keyword.lower() in tag_names:
+                    try:
+                        Keyword.objects.get_or_create(
+                            document=document,
+                            tag=Tag.object.filter(name=keyword.title()))
+                    except Tag.DoesNotExist:
+                        pass
 
             rating = Rating(
                 creator=user,
