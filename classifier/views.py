@@ -48,6 +48,10 @@ def document(request, document_slug):
      
         context_dict['document'] = document
 
+        keywords = KeyWord.objects.filter(document=document)
+
+        context_dict['keywords'] = keywords
+
         machine_ratings = serializers.serialize( "python",
             Rating.objects.filter(document=document, user_generated=False),
             fields=(
@@ -106,10 +110,65 @@ def tag(request, tag_slug):
         tag = Tag.objects.get(slug=tag_slug)
 
         context_dict['tag'] = tag
-        context_dict['communities'] = Community.objects.filter(
-            keyword__tag=tag)
-        context_dict['related_tags'] = Tag.objects.filter(
-            relationship__tag=tag)
+
+        context_dict['from_broader_relationships'] = Relationship.objects.filter(
+            from_tag=tag,
+            relationship_type="Broader term")
+
+        context_dict['from_narrower_relationships'] = Relationship.objects.filter(
+            from_tag=tag,
+            relationship_type="Narrower term")
+
+        context_dict['from_related_relationships'] = Relationship.objects.filter(
+            from_tag=tag,
+            relationship_type="Related term")
+
+        context_dict['from_use_relationships'] = Relationship.objects.filter(
+            from_tag=tag,
+            relationship_type="Use")
+
+        context_dict['from_use_for_relationships'] = Relationship.objects.filter(
+            from_tag=tag,
+            relationship_type="Used for")
+
+        context_dict['from_translation_relationships'] = Relationship.objects.filter(
+            from_tag=tag,
+            relationship_type="Translation")
+
+        context_dict['from_subject_category_relationships'] = Relationship.objects.filter(
+            from_tag=tag,
+            relationship_type="Subject category")
+
+        context_dict['to_broader_relationships'] = Relationship.objects.filter(
+            to_tag=tag,
+            relationship_type="Broader term")
+
+        context_dict['to_narrower_relationships'] = Relationship.objects.filter(
+            to_tag=tag,
+            relationship_type="Narrower term")
+
+        context_dict['to_related_relationships'] = Relationship.objects.filter(
+            to_tag=tag,
+            relationship_type="Related term")
+
+        context_dict['to_use_relationships'] = Relationship.objects.filter(
+            to_tag=tag,
+            relationship_type="Use")
+
+        context_dict['to_use_for_relationships'] = Relationship.objects.filter(
+            to_tag=tag,
+            relationship_type="Used for")
+
+        context_dict['to_translation_relationships'] = Relationship.objects.filter(
+            to_tag=tag,
+            relationship_type="Translation")
+
+        context_dict['to_subject_category_relationships'] = Relationship.objects.filter(
+            to_tag=tag,
+            relationship_type="Subject category")
+
+        context_dict['keyword_documents'] = KeyWord.objects.filter(
+            tag=tag)
 
     except Tag.DoesNotExist:
         pass
@@ -185,16 +244,27 @@ def add_document(request, pk=None):
             document = Document.objects.get(slug=slug)
             tags = Tag.objects.all()
 
-            tag_names = [tag.name.lower() for tag in tags]
+            tag_slugs = [tag.slug for tag in tags]
 
-            # Associate tags from user keywords
+            # Associate tags from user and rake keywords
             
             for keyword in split_keywords:
-                if keyword.lower() in tag_names:
+                if slugify(keyword) in tag_slugs:
                     try:
-                        Keyword.objects.get_or_create(
+                        kw = KeyWord(
                             document=document,
-                            tag=Tag.object.filter(name=keyword.title()))
+                            tag=Tag.objects.get(slug=slugify(keyword)))
+                        kw.save()
+                    except Tag.DoesNotExist:
+                        pass
+
+            for keyword in rake_keywords:
+                if slugify(keyword) in tag_slugs:
+                    try:
+                        kw = KeyWord(
+                            document=document,
+                            tag=Tag.objects.get(slug=slugify(keyword)))
+                        kw.save()
                     except Tag.DoesNotExist:
                         pass
 

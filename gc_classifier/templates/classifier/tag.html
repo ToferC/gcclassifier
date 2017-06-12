@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+	{{tag.name}}
+{% endblock title %}
+
+{% block brand %}
+	{{tag.name}}
+{% endblock brand %}
+
+{% block content %}
+	<h4>Tag: {{tag.name}}</h4>
+	<img src="{{ tag.image.url }}" width="450">
+	{% if tag.description %}
+		<p>{{tag.description}}</p>
+	{% else %}
+		<p>No description provided</p>
+	{% endif %}
+
+	<p>Created: {{tag.created_date}}<br>
+	Edited: {{tag.edited_date}}</p>
+
+	<h4>Associated Tags</h4>
+	
+	<h5>Subject Categories</h5>
+	{% for relationship in from_subject_category_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.to_tag.slug %}">{{relationship.to_tag.name}}<br>{{relationship.to_tag.relationship}}</a>
+	{% endfor %}
+
+	{% for relationship in to_subject_category_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.from_tag.slug %}">{{relationship.from_tag.name}}<br>{{relationship.from_tag.relationship}}</a>
+	{% endfor %}
+
+	<hr>
+
+	<h5>Broader Terms</h5>
+	{% for relationship in from_broader_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.to_tag.slug %}">{{relationship.to_tag.name}}<br>{{relationship.to_tag.relationship}}</a>
+	{% endfor %}
+
+	{% for relationship in to_broader_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.from_tag.slug %}">{{relationship.from_tag.name}}<br>{{relationship.from_tag.relationship}}</a>
+	{% endfor %}
+
+	<hr>
+
+	<h5>Related Terms</h5>
+	<!-- only need one call as the relationship is two-way-->
+
+	{% for relationship in from_related_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.to_tag.slug %}">{{relationship.to_tag.name}}<br>{{relationship.to_tag.relationship}}</a>
+	{% endfor %}
+
+	<hr>
+
+	<h5>Narrower Terms</h5>
+	{% for relationship in from_narrower_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.to_tag.slug %}">{{relationship.to_tag.name}}<br>{{relationship.to_tag.relationship}}</a>
+	{% endfor %}
+
+	{% for relationship in to_narrower_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.from_tag.slug %}">{{relationship.from_tag.name}}<br>{{relationship.from_tag.relationship}}</a>
+	{% endfor %}
+
+	<hr>
+
+	<h5>Translation</h5>
+	{% for relationship in from_translation_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.to_tag.slug %}">{{relationship.to_tag.name}}<br>{{relationship.to_tag.relationship}}</a>
+	{% endfor %}
+
+	{% for relationship in to_translation_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.from_tag.slug %}">{{relationship.from_tag.name}}<br>{{relationship.from_tag.relationship}}</a>
+	{% endfor %}
+
+	<hr>
+
+	<h5>Use</h5>
+	{% for relationship in from_use_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.to_tag.slug %}">{{relationship.to_tag.name}}<br>{{relationship.to_tag.relationship}}</a>
+	{% endfor %}
+
+	{% for relationship in to_use_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.from_tag.slug %}">{{relationship.from_tag.name}}<br>{{relationship.from_tag.relationship}}</a>
+	{% endfor %}
+
+	<hr>
+
+	<h5>Use For</h5>
+	{% for relationship in from_use_for_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.to_tag.slug %}">{{relationship.to_tag.name}}<br>{{relationship.to_tag.relationship}}</a>
+	{% endfor %}
+
+	{% for relationship in to_use_for_relationships %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=relationship.from_tag.slug %}">{{relationship.from_tag.name}}<br>{{relationship.from_tag.relationship}}</a>
+	{% endfor %}
+
+	<hr>
+
+	<hr>
+
+
+
+	<h4>Documents</h4>
+	{% for keyword in keyword_documents %}
+		<a class="btn btn-primary" href="{% url 'document' document_slug=keyword.document.slug %}">{{keyword.document.title}}</a>
+	{% endfor %}
+	<hr>
+
+{% endblock content %}

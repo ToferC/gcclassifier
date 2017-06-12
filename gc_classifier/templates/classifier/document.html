@@ -45,8 +45,8 @@
 	</table>
 	<hr>
 	<h4>Tags</h4>
-	{% for tag in tags %}
-		{{tag.name}}
+	{% for keyword in keywords %}
+		<a class="btn btn-primary" href="{% url 'tag' tag_slug=keyword.tag.slug %}">{{keyword.tag.name}}</a>
 	{% endfor %}
 	<hr>
 	<a class="btn btn-primary" href="{% url 'review_document' document_slug=document.slug %}">Review Document</a>
