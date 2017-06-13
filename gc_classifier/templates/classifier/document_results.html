@@ -24,17 +24,21 @@
 	<table border="1">
 	<th>Community</th>
 	<th>Rating</th>
-	{% for rating in user_ratings %}
-		{% for field, value in rating.fields.items %}
-			<tr><td>{{ field }}</td>
-			<td>{{ value }}</td></tr>
-		{% endfor %}
-	{% endfor %}
-	</table>
-
-	<hr>
-	<h3>User Scoring</h3>
-	<p>Select the communities that apply to your document.</p>
-	{% crispy form %}
+	
+	 	<tr><td>ATIP Community</td><td>{{atip_community}}</td>
+		<tr><td>Materiel Community</td><td>{{materiel_community}}</td>
+		<tr><td>Procurement Community</td><td>{{procurement_community}}</td>
+		<tr><td>Real Property Community</td><td>{{real_property_community}}</td>
+		<tr><td>Evaluator Community</td><td>{{evaluator_community}}</td>
+		<tr><td>Communication Community</td><td>{{communication_community}}</td>
+		<tr><td>Regulator Community</td><td>{{regulator_community}}</td>
+		<tr><td>Financial Community</td><td>{{financial_community}}</td>
+		<tr><td>IM Community</td><td>{{im_community}}</td>
+		<tr><td>Auditor Community</td><td>{{auditor_community}}</td>
+		<tr><td>Security Community</td><td>{{security_community}}</td>
+		<tr><td>HR Community</td><td>{{hr_community}}</td>
+		<tr><td>Policy Community</td><td>{{policy_community}}</td>
+		<tr><td>Science Community</td><td>{{science_community}}</td>
+		<tr><td>Service Community</td><td>{{service_community}}</td>
 
 {% endblock content %}

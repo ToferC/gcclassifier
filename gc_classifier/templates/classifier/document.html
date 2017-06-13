@@ -50,4 +50,5 @@
 	{% endfor %}
 	<hr>
 	<a class="btn btn-primary" href="{% url 'review_document' document_slug=document.slug %}">Review Document</a>
+	<a class="btn btn-primary" href="{% url 'document_results' document_slug=document.slug %}">Document Results</a>
 {% endblock content %}

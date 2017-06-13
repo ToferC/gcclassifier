@@ -194,7 +194,7 @@ def community(request, community_slug):
 
 
 # Add views
-
+@login_required
 def add_member(request):
     pass
 
@@ -332,7 +332,7 @@ def upload_file(request):
     return render(request, 'classifier/upload_file.html',
         {'form': form})
 
-
+@login_required
 def review_document(request, document_slug):
 
     context_dict = {}
@@ -421,7 +421,7 @@ def document_results(request, document_slug):
         machine_ratings = Rating.objects.filter(document=document).filter(user_generated=False)
         user_ratings = Rating.objects.filter(document=document).filter(user_generated=True)
 
-        num_user_ratings = min(len(user_ratings),1)
+        num_user_ratings = len(user_ratings)
         num_machine_ratings = len(machine_ratings)
 
         context_dict['num_user_ratings'] = num_user_ratings
@@ -462,22 +462,84 @@ def document_results(request, document_slug):
             context_dict['science_community'] += rating.science_community
             context_dict['service_community'] += rating.service_community
 
-        context_dict['atip_community'] = context_dict['atip_community'] / num_user_ratings
-        context_dict['materiel_community'] = context_dict['materiel_community'] / num_user_ratings
-        context_dict['procurement_community'] = context_dict['procurement_community'] / num_user_ratings
-        context_dict['real_property_community'] = context_dict['real_property_community'] / num_user_ratings
-        context_dict['evaluator_community'] = context_dict['evaluator_community'] / num_user_ratings
-        context_dict['communication_community'] = context_dict['communication_community'] / num_user_ratings
-        context_dict['regulator_community'] = context_dict['regulator_community'] / num_user_ratings
-        context_dict['financial_community'] = context_dict['financial_community'] / num_user_ratings
-        context_dict['im_community'] = context_dict['im_community'] / num_user_ratings
-        context_dict['it_community'] = context_dict['it_community'] / num_user_ratings
-        context_dict['auditor_community'] = context_dict['auditor_community'] / num_user_ratings
-        context_dict['security_community'] = context_dict['security_community'] / num_user_ratings
-        context_dict['hr_community'] = context_dict['hr_community'] / num_user_ratings
-        context_dict['policy_community'] = context_dict['policy_community'] / num_user_ratings
-        context_dict['science_community'] = context_dict['science_community'] / num_user_ratings
-        context_dict['service_community'] = context_dict['service_community'] / num_user_ratings
+        try:
+            context_dict['atip_community'] = context_dict['atip_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['atip_community'] = 0
+
+        try:
+            context_dict['materiel_community'] = context_dict['materiel_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['materiel_community'] = 0
+
+        try:
+            context_dict['procurement_community'] = context_dict['procurement_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['procurement_community'] = 0
+
+        try:
+            context_dict['real_property_community'] = context_dict['real_property_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['real_property_community'] = 0
+
+        try:
+            context_dict['evaluator_community'] = context_dict['evaluator_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['evaluator_community'] = 0
+
+        try:
+            context_dict['communication_community'] = context_dict['communication_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['communication_community'] = 0
+
+        try:
+            context_dict['regulator_community'] = context_dict['regulator_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['regulator_community'] = 0
+
+        try:
+            context_dict['financial_community'] = context_dict['financial_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['financial_community'] = 0
+
+        try:
+            context_dict['im_community'] = context_dict['im_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['im_community'] = 0
+
+        try:
+            context_dict['it_community'] = context_dict['it_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['it_community'] = 0
+
+        try:
+            context_dict['auditor_community'] = context_dict['auditor_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['auditor_community'] = 0
+
+        try:
+            context_dict['security_community'] = context_dict['security_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['security_community'] = 0
+
+        try:
+            context_dict['hr_community'] = context_dict['hr_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['hr_community'] = 0
+
+        try:
+            context_dict['policy_community'] = context_dict['policy_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['policy_community'] = 0
+
+        try:
+            context_dict['science_community'] = context_dict['science_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['science_community'] = 0
+        try:
+            context_dict['service_community'] = context_dict['service_community'] / num_user_ratings
+        except ZeroDivisionError:
+            context_dict['service_community'] = 0
 
         context_dict['document'] = document
 
